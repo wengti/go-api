@@ -3,6 +3,7 @@ package middlewares
 import (
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,11 +14,14 @@ func VerifyAuthorization() gin.HandlerFunc {
 	return func(context *gin.Context) {
 
 		// Get jwt string from the header
-		jwtString := context.GetHeader("Authorization")
-		if jwtString == "" {
+		rawJwtString := context.GetHeader("Authorization")
+		if rawJwtString == "" {
 			context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized Access."})
 			return
 		}
+
+		// Strip Bearer from the jwt string
+		jwtString := strings.TrimPrefix(rawJwtString, "Bearer ")
 
 		// Parse jwt string into jwt token
 		jwtToken, err := jwt.Parse(
@@ -28,7 +32,7 @@ func VerifyAuthorization() gin.HandlerFunc {
 			jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
 		)
 		if err != nil {
-			context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized Access."})
+			context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 			return
 		}
 
@@ -39,6 +43,7 @@ func VerifyAuthorization() gin.HandlerFunc {
 			return
 		}
 
+		// Set context to be used by subsequent routes
 		context.Set("userId", claims["id"])
 		context.Set("userEmail", claims["email"])
 

@@ -50,7 +50,20 @@ func addEvent(context *gin.Context) {
 	}
 
 	// Add the user id to the new event since not included in body request
-	newEvent.UserId = 1
+	// jwt token stores number as flt64, text as string
+	userId, exists := context.Get("userId")
+	if !exists {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	fltUserId, ok := userId.(float64)
+	if !ok {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	newEvent.UserId = int64(fltUserId)
 
 	// Add the new event to the lists
 	err = db.SaveNewEvent(&newEvent)
