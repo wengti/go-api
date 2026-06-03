@@ -33,7 +33,8 @@ func InitializeDatabase() {
 	createUserTableQuery := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		email TEXT NOT NULL UNIQUE
+		email TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL
 	)
 	`
 	_, err = Db.Exec(createUserTableQuery)

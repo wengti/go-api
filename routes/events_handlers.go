@@ -89,7 +89,7 @@ func updateEventById(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Event with id %v is updated successfully.", eventId)})
+	context.JSON(http.StatusCreated, gin.H{"message": fmt.Sprintf("Event with id %v is updated successfully.", eventId)})
 }
 
 func deleteEventById(context *gin.Context) {
