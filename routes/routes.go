@@ -7,4 +7,5 @@ func HandleRoutes(router *gin.Engine) {
 	router.GET("/events", getEvents)
 	router.GET("/events/:id", getEventById)
 	router.POST("/events", addEvent)
+	router.PUT("events/:id", updateEventById)
 }
