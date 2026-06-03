@@ -23,3 +23,25 @@ func SaveNewUser(newUser models.User) error {
 
 	return nil
 }
+
+func FetchUserByEmail(email string) (int64, string, error) {
+
+	var userId int64
+	var hashedPw string
+
+	// Prepare query statement
+	query := `
+	SELECT id, password FROM users
+	WHERE email = $1
+	`
+
+	// Execute query statement
+	row := Db.QueryRow(query, email)
+	err := row.Scan(&userId, &hashedPw)
+	if err != nil {
+		return -1, "", err
+	}
+
+	return userId, hashedPw, nil
+
+}

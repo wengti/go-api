@@ -11,4 +11,5 @@ func HandleRoutes(router *gin.Engine) {
 	router.DELETE("events/:id", deleteEventById)
 
 	router.POST("/signup", handleSignup)
+	router.POST("/login", handleLogin)
 }
