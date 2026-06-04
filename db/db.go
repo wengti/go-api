@@ -58,4 +58,19 @@ func InitializeDatabase() {
 		panic(err.Error())
 	}
 
+	// Create registration table if not exists
+	createRegistrationTableQuery := `
+	CREATE TABLE IF NOT EXISTS registration (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		event_id INTEGER NOT NULL,
+		user_id INTEGER NOT NULL,
+		FOREIGN KEY (event_id) REFERENCES events(id)
+		FOREIGN KEY (user_id) REFERENCES users(id)
+	)
+	`
+	_, err = Db.Exec(createRegistrationTableQuery)
+	if err != nil {
+		panic(err.Error())
+	}
+
 }
