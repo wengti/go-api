@@ -1,6 +1,10 @@
 package db
 
-import "example.com/go-api/models"
+import (
+	"errors"
+
+	"example.com/go-api/models"
+)
 
 // Save
 
@@ -99,7 +103,7 @@ func UpdateEventById(updatedEvent models.Event) error {
 	query := `
 	UPDATE events
 	SET name = $1, location = $2, description = $3
-	WHERE id = $4
+	WHERE id = $4 AND user_id = $5
 	`
 	stmt, err := Db.Prepare(query)
 	if err != nil {
@@ -108,9 +112,18 @@ func UpdateEventById(updatedEvent models.Event) error {
 	defer stmt.Close()
 
 	// Execute query statement
-	_, err = Db.Exec(query, updatedEvent.Name, updatedEvent.Location, updatedEvent.Description, updatedEvent.Id)
+	result, err := Db.Exec(query, updatedEvent.Name, updatedEvent.Location, updatedEvent.Description, updatedEvent.Id, updatedEvent.UserId)
 	if err != nil {
 		return err
+	}
+
+	row_affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if row_affected == 0 {
+		return errors.New("No update is made.")
 	}
 
 	return nil
@@ -119,12 +132,12 @@ func UpdateEventById(updatedEvent models.Event) error {
 
 // Delete
 
-func DeleteEventById(targetId int64) error {
+func DeleteEventById(targetId, userId int64) error {
 
 	// Prepare query statement
 	query := `
 	DELETE FROM events
-	WHERE id = $1
+	WHERE id = $1 and user_id = $2
 	`
 	stmt, err := Db.Prepare(query)
 	if err != nil {
@@ -133,9 +146,18 @@ func DeleteEventById(targetId int64) error {
 	defer stmt.Close()
 
 	// Execute statement
-	_, err = stmt.Exec(targetId)
+	result, err := stmt.Exec(targetId, userId)
 	if err != nil {
 		return err
+	}
+
+	row_affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if row_affected == 0 {
+		return errors.New("No update is made.")
 	}
 
 	return nil

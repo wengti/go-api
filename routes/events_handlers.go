@@ -95,6 +95,23 @@ func updateEventById(context *gin.Context) {
 	// Bind eventId into the updatedEvent
 	updatedEvent.Id = eventId
 
+	// Add the user id to the new event since not included in body request
+	// jwt token stores number as flt64, text as string
+	userId, exists := context.Get("userId")
+	if !exists {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	fltUserId, ok := userId.(float64)
+	if !ok {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	// Bind userId into the updatedEvent
+	updatedEvent.UserId = int64(fltUserId)
+
 	// Hit database to update the event
 	err = db.UpdateEventById(updatedEvent)
 	if err != nil {
@@ -113,7 +130,21 @@ func deleteEventById(context *gin.Context) {
 		return
 	}
 
-	err = db.DeleteEventById(eventId)
+	// Add the user id to the new event since not included in body request
+	// jwt token stores number as flt64, text as string
+	userId, exists := context.Get("userId")
+	if !exists {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	fltUserId, ok := userId.(float64)
+	if !ok {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid credentials"})
+		return
+	}
+
+	err = db.DeleteEventById(eventId, int64(fltUserId))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return

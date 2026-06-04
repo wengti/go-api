@@ -14,8 +14,8 @@ func HandleRoutes(router *gin.Engine) {
 	authGroup.Use(middlewares.VerifyAuthorization())
 	{
 		authGroup.POST("/events", addEvent)
-		authGroup.PUT("events/:id", updateEventById)
-		authGroup.DELETE("events/:id", deleteEventById)
+		authGroup.PUT("/events/:id", updateEventById)
+		authGroup.DELETE("/events/:id", deleteEventById)
 	}
 
 	router.POST("/signup", handleSignup)
