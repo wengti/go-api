@@ -291,3 +291,7 @@ if !exists {
     return
 }
 ```
+
+## Additional implementation for authentication that could have been done
+* Include the time when the JWT token is issued
+* In the middleware, always check if it has been longer than a certain time and if so requires the user to login again.
