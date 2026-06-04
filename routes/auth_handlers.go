@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -69,7 +68,6 @@ func handleLogin(context *gin.Context) {
 
 	// Get a signed JWT string when password matches
 	jwtSecret := os.Getenv("JWT_SECRET")
-	fmt.Println(jwtSecret)
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"id":    userId,
